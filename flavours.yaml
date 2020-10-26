@@ -11,7 +11,7 @@ flavour_sets:
         platforms: [ oci ]
         fails: [ unit, integration ]
       - architectures: [ 'amd64' ]
-        platforms: [ ali, aws, azure, gcp, openstack, vmware ]
+        platforms: [ ali, aws, azure, gcp, openstack. otc, vmware ]
         modifiers: [ [ gardener, _prod ] ]
         fails: [ unit, integration ]
       - architectures: [ 'amd64' ]
@@ -21,6 +21,6 @@ flavour_sets:
   - name: 'testing'
     flavour_combinations:
       - architectures: [ 'amd64' ]
-        platforms: [ ali, aws, azure, gcp, openstack, vmware, kvm ]
+        platforms: [ ali, aws, azure, gcp, openstack, otc, vmware, kvm ]
         modifiers: [ [ _prod, gardener ] ]
         fails: [ unit, integration ]

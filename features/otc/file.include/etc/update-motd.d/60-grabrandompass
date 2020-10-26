@@ -1,0 +1,9 @@
+#!/bin/sh
+
+MOTD_FILE=/etc/update-motd.d/60-grabrandompass
+CLOUDCONFIG_OUTPUT=$(journalctl -u cloud-config | grep -A10 'Set the following')
+RANDOM_PASSWORD=$(echo "${CLOUDCONFIG_OUTPUT}" | grep -A1 'Set the following .random. passwords' | grep -v CLOUDINIT | tail -n1 | sed 's/^[^]]*\]: //')
+
+if test -n "${RANDOM_PASSWORD}"; then
+    echo "Initial login with $RANDOM_PASSWORD"
+fi

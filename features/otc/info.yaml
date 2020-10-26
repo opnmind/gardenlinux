@@ -1,0 +1,12 @@
+description: "OpenTelekomCloud platform (cloud-init, open-vm-tools)"
+type: platform
+features:
+  include: 
+    - cloud
+convert:
+  format: 
+    - type: qcow2
+upload:
+  target:
+    - type: otc
+      image-name: $(OPENTELEKOMCLOUD_IMAGE_NAME)

@@ -6,3 +6,5 @@
 /features/_dev/id_dev
 .idea
 __pycache__
+*.env
+sign.pub

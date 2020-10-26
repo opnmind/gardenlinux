@@ -1,10 +1,17 @@
-SNAPSHOT_DATE=`bin/garden-version --date`
-VERSION=`bin/garden-version`
+SNAPSHOT_DATE=$(shell bin/garden-version --date)
+VERSION=$(shell bin/garden-version)
 IMAGE_BASENAME=garden-linux
 PUBLIC=true
 AWS_DISTRIBUTE=
 BUILDDIR=.build
-BUILDKEY="contact@gardenlinux.io"
+GARDEN_BUILDKEY="contact@gardenlinux.io"
+THIRD_PARTY_BUILDKEY := $(shell cat ./buildkey.env)
+
+ifndef THIRD_PARTY_BUILDKEY
+BUILDKEY=$(GARDEN_BUILDKEY)
+else
+BUILDKEY=$(THIRD_PARTY_BUILDKEY)
+endif
 
 sign.pub:
 	@gpg --list-secret-keys $(BUILDKEY) > /dev/null || echo "No secret key for $(BUILDKEY) exists, signing disabled" 
@@ -88,6 +95,27 @@ openstack-dev: sign.pub
 
 openstack-dev-upload: 
 	./bin/upload-openstack $(BUILDDIR)/openstack-dev/$(SNAPSHOT_DATE)/amd64/bullseye/rootfs.vmdk $(OPENSTACK_DEV_IMAGE_NAME)
+
+OPENTELEKOMCLOUD_IMAGE_NAME=$(IMAGE_BASENAME)-otc-$(VERSION)
+otc: sign.pub
+	./build.sh --features server,cloud,gardener,otc $(BUILDDIR)/otc $(SNAPSHOT_DATE)
+
+otc-upload:
+	./bin/upload-otc $(BUILDDIR)/otc/$(SNAPSHOT_DATE)/amd64/bullseye/rootfs.qcow2 $(OPENTELEKOMCLOUD_IMAGE_NAME) $(VERSION)
+
+OPENTELEKOMCLOUD_DEV_IMAGE_NAME=$(IMAGE_BASENAME)-otc-dev-$(VERSION)
+otc-dev: sign.pub
+	./build.sh --features server,cloud,gardener,otc,_dev $(BUILDDIR)/otc-dev $(SNAPSHOT_DATE)
+
+otc-dev-upload: 
+	./bin/upload-otc $(BUILDDIR)/otc-dev/$(SNAPSHOT_DATE)/amd64/bullseye/rootfs.qcow2 $(OPENTELEKOMCLOUD_DEV_IMAGE_NAME) $(VERSION)
+
+OPENTELEKOMCLOUD_CHOST_IMAGE_NAME=$(IMAGE_BASENAME)-chost-otc-$(VERSION)
+otc-chost: sign.pub
+	./build.sh --features server,cloud,chost,otc $(BUILDDIR)/otc-chost $(SNAPSHOT_DATE)
+
+otc-chost-upload: 
+	./bin/upload-otc $(BUILDDIR)/otc-chost/$(SNAPSHOT_DATE)/amd64/bullseye/rootfs.qcow2 $(OPENTELEKOMCLOUD_CHOST_IMAGE_NAME) $(VERSION)
 
 VMWARE_DEV_IMAGE_NAME=$(IMAGE_BASENAME)-vmware-dev-$(VERSION)
 vmware-dev: sign.pub

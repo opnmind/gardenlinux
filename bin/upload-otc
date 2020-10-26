@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Create OpenStack Image for CC EE
+
+#Upload image
+openstack image create \
+     --container-format bare \
+     --disk-format qcow2 \
+     --min-disk 16 \
+     --min-ram 1024 \
+     --property __description="Garden Linux $3 64bit is a Debian deriviate that aims to provide a small, auditable linux image - login as user admin w/ ssh." \
+     --property __os_version="Debian GNU/Linux 10.2.0 64bit" \
+     --property __support_kvm="true" \
+     --property hw_vif_multiqueue_enabled="True" \
+     --property virtual_env_type="FusionCompute" \
+     --file=$1 \
+     $2 \
+     -f json
